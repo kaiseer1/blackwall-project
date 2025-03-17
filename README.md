@@ -1,6 +1,6 @@
 BlackWall: AI-Driven Cybersecurity Defense
 
-Author: Basil Abdullah Version: 1.0 Date: 2025A ffiliation: Al-Baha University
+Author: Basil Abdullah Version: 1.0 Date: 2025 Affiliation: Al-Baha University
 
 Overview:
 
@@ -32,11 +32,11 @@ Before running BlackWall, install the required dependencies:
 
 pip install -r requirements.txt
 
-Dataset Installation
+Dataset Installation:
 
 To train and use the AI model effectively, download the CIC-IDS-2017 dataset: "http://cicresearch.ca/CICDataset/CIC-IDS-2017/Dataset/CIC-IDS-2017/CSVs/MachineLearningCSV.zip"
 
-Download the CSV files from:CIC-IDS-2017 Machine Learning CSV
+Download the CSV files: Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv and Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv
 
 Extract and place the CSV files inside the datasets/ directory.
 
@@ -123,4 +123,3 @@ BlackWall is the future of AI-driven cybersecurity.The goal is clear: deceive, n
 Cyberwarfare is evolving—so should our defenses.
 
 glory to god...
-
