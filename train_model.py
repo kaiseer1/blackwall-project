@@ -2,101 +2,149 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import gc
+import logging
+from datetime import datetime
+from pathlib import Path
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from imblearn.over_sampling import SMOTE
+import warnings
 
-# Dataset files
-dataset_files = [
-    "Monday-WorkingHours.pcap_ISCX.csv",
-    "Tuesday-WorkingHours.pcap_ISCX.csv",
-    "Wednesday-workingHours.pcap_ISCX.csv",
-    "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
-    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
-]
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("train_model.log", encoding="utf-8"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
-# Features & Labels
-feature_columns = [
-    'Flow Duration', 'Total Fwd Packets', 'Total Backward Packets', 'Fwd Packet Length Mean',
-    'Flow Bytes/s', 'Flow Packets/s', 'SYN Flag Count', 'ACK Flag Count'
-]
-label_column = 'Label'
+# Suppress warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
-# Load Data
-df_list = []
-for file in dataset_files:
-    if os.path.exists(file):
-        try:
-            chunk = pd.read_csv(file, low_memory=False)
-            df_list.append(chunk)
-        except Exception as e:
-            print(f"[!] Error reading {file}: {e}")
+def main():
+    try:
+        start_time = datetime.now()
+        logger.info("BlackWall AI Model Training Started")
 
-df = pd.concat(df_list, ignore_index=True) if df_list else None
+        # Create directories if they don't exist
+        model_dir = Path("models")
+        data_dir = Path.cwd() / "datasets" / "MachineLearningCSV"
+        model_dir.mkdir(exist_ok=True)
 
-if df is None:
-    raise ValueError("No valid dataset files found!")
+        # Dataset files
+        dataset_files = [
+            data_dir / "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+            data_dir / "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+        ]
 
-# ✅ Remove spaces from column names
-df.columns = df.columns.str.strip()
+        # Features selection
+        feature_columns = [
+            'Flow Duration', 'Total Fwd Packets', 'Total Backward Packets',
+            'Fwd Packet Length Max', 'Fwd Packet Length Min', 'Fwd Packet Length Mean',
+            'Fwd Packet Length Std', 'Bwd Packet Length Max', 'Bwd Packet Length Min',
+            'Bwd Packet Length Mean', 'Bwd Packet Length Std', 'Flow Bytes/s',
+            'Flow Packets/s', 'Flow IAT Mean', 'Flow IAT Std', 'Flow IAT Max',
+            'Flow IAT Min', 'SYN Flag Count', 'FIN Flag Count', 'RST Flag Count',
+            'PSH Flag Count', 'ACK Flag Count', 'URG Flag Count'
+        ]
+        label_column = 'Label'
 
-# ✅ Ensure the label column exists
-if label_column not in df.columns:
-    raise ValueError(f"[!] Label column '{label_column}' not found in dataset!")
+        # Load datasets with memory optimization
+        logger.info("Loading datasets...")
+        dfs = []
+        for file_path in dataset_files:
+            if file_path.exists():
+                logger.info(f"Processing: {file_path.name}")
+                chunks = pd.read_csv(file_path, chunksize=100000)
+                for chunk in chunks:
+                    chunk.columns = chunk.columns.str.strip()
+                    if label_column not in chunk.columns:
+                        logger.warning(f"Label column missing in {file_path.name}, skipping...")
+                        continue
+                    available_features = list(set(feature_columns) & set(chunk.columns))
+                    missing_features = set(feature_columns) - set(chunk.columns)
+                    for feature in missing_features:
+                        chunk[feature] = 0  # Fill missing features with 0
+                    chunk = chunk[available_features + [label_column]]
+                    attack_labels = ["DDoS", "PortScan", "Infilteration", "Web Attack", "Brute Force"]
+                    chunk[label_column] = chunk[label_column].apply(lambda x: 1 if any(label in str(x) for label in attack_labels) else 0)
+                    chunk.replace([np.inf, -np.inf], np.nan, inplace=True)
+                    chunk.fillna(0, inplace=True)
+                    dfs.append(chunk)
+                    gc.collect()
+            else:
+                logger.warning(f"File not found: {file_path}")
 
-# ✅ Convert label to binary (1 = attack, 0 = normal)
-df[label_column] = df[label_column].apply(lambda x: 1 if 'attack' in str(x).lower() else 0)
+        if not dfs:
+            raise ValueError("No valid dataset files found")
 
-# ✅ Check Class Distribution
-print("[+] Class Distribution:")
-print(df[label_column].value_counts())
+        # Concatenate data and free memory
+        df = pd.concat(dfs, ignore_index=True)
+        del dfs
+        gc.collect()
 
-# ✅ Ensure at least 2 classes exist before applying SMOTE
-if len(df[label_column].unique()) < 2:
-    print("[!] Only one class detected. Using original dataset without SMOTE.")
+        logger.info(f"Total samples: {len(df)}")
+        logger.info(f"Class distribution:\n{df[label_column].value_counts()}")
 
-    # ✅ Fix Invalid Values (handle NaNs and inf before training)
-    df.replace([np.inf, -np.inf], np.nan, inplace=True)  # Replace inf with NaN
-    df.fillna(df.mean(), inplace=True)  # Replace NaN with column mean
+        if len(df[label_column].unique()) < 2:
+            raise ValueError("Dataset contains only one class. SMOTE cannot be applied")
 
-    # ✅ Cap extreme values (avoiding overflow issues)
-    df[feature_columns] = np.clip(df[feature_columns], -1e6, 1e6)
+        # Train/test split
+        X = df[feature_columns]
+        y = df[label_column].astype(int)
+        del df
+        gc.collect()
 
-    # ✅ Scale Data
-    scaler = StandardScaler()
-    X_resampled = scaler.fit_transform(df[feature_columns])
-    y_resampled = df[label_column].values
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
+        del X, y
+        gc.collect()
 
-else:
-    # ✅ Fix Invalid Values (handle NaNs and inf before training)
-    df.replace([np.inf, -np.inf], np.nan, inplace=True)  # Replace inf with NaN
-    df.fillna(df.mean(), inplace=True)  # Replace NaN with column mean
+        # Scaling features
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
+        del X_train
+        gc.collect()
 
-    # ✅ Cap extreme values
-    df[feature_columns] = np.clip(df[feature_columns], -1e6, 1e6)
+        # Apply SMOTE if needed
+        if min(y_train.value_counts()) < 1000:
+            logger.info("Applying SMOTE for class balance")
+            smote = SMOTE(random_state=42, n_jobs=-1)
+            X_resampled, y_resampled = smote.fit_resample(X_train_scaled, y_train)
+        else:
+            X_resampled, y_resampled = X_train_scaled, y_train
+        del X_train_scaled, y_train
+        gc.collect()
 
-    X = df[feature_columns]
-    y = df[label_column]
+        # Train the model
+        logger.info("Training Random Forest model")
+        model = RandomForestClassifier(
+            n_estimators=200, max_depth=15, min_samples_split=5,
+            min_samples_leaf=2, max_features='sqrt', bootstrap=True,
+            random_state=42, n_jobs=-1, class_weight='balanced'
+        )
+        model.fit(X_resampled, y_resampled)
 
-    # ✅ Scale Data
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+        # Save model and scaler
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        joblib.dump(model, model_dir / f"blackwall_model_{timestamp}.pkl", compress=3)
+        joblib.dump(scaler, model_dir / "blackwall_scaler.pkl", compress=3)
 
-    # ✅ Apply SMOTE
-    smote = SMOTE(random_state=42)
-    X_resampled, y_resampled = smote.fit_resample(X_scaled, y)
+        logger.info("BlackWall AI Model Training Completed Successfully")
 
-# ✅ Final Check: Ensure X has valid numbers
-if np.any(np.isnan(X_resampled)) or np.any(np.isinf(X_resampled)):
-    print("[!] Warning: X contains invalid numbers. Replacing NaNs with 0.")
-    X_resampled = np.nan_to_num(X_resampled)  # Replace NaN with 0
+    except Exception as e:
+        logger.error(f"Error during model training: {str(e)}", exc_info=True)
+    finally:
+        gc.collect()
 
-# ✅ Train Model
-model = RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42, n_jobs=-1, class_weight='balanced')
-model.fit(X_resampled, y_resampled)
-
-# ✅ Save Model & Scaler
-joblib.dump(model, "model.pkl")
-joblib.dump(scaler, "scaler.pkl")
-
-print("[+] AI Model Trained and Saved Successfully!")
+if __name__ == "__main__":
+    main()
