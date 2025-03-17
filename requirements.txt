@@ -1,0 +1,6 @@
+scapy
+numpy
+scikit-learn
+joblib
+python-json-logger
+imbalanced-learn
