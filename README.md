@@ -57,7 +57,7 @@ Install dependencies:
 pip install -r requirements.txt
 
 Run initial setup:
-python setup.py
+python blackwall.py
 
 
 Usage
