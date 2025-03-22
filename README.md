@@ -1,132 +1,193 @@
 BlackWall: AI-Driven Cybersecurity Defense
 Author: Basil Abdullah
-Version: 1.0
+Version: V3.3.9
 Date: 2025
 Affiliation: Al-Baha University
 
+BlackWall v3.3.9
+AI-Driven Cybersecurity Defense System
+
 Overview
-BlackWall is an AI-powered cybersecurity framework designed to autonomously detect, contain, and neutralize cyber threats in real-time. Unlike traditional security solutions that rely on static rule-based detection, BlackWall leverages:
-
-- Machine Learning for adaptive threat detection
-- Deception-Based Security to mislead attackers
-- Deep System Monitoring for proactive protection
-
-BlackWall is modular, scalable, and efficient — integrating multiple cybersecurity layers to predict, deceive, and neutralize cyber threats before they escalate.
+--------
+BlackWall is a next-generation AI-powered cybersecurity system that monitors, detects, and neutralizes cyber threats in real-time. Unlike traditional security solutions, BlackWall leverages machine learning, deception techniques, and automated threat response to create a proactive defense mechanism that adapts to evolving threats.
 
 Key Features
-- Network Traffic Monitoring – Continuously scans and analyzes real-time network packets for malicious behavior.
-- AI-Powered Threat Detection – Uses a RandomForest-based ML model to detect anomalous patterns.
-- Automated Threat Containment – Dynamically blocks and isolates threats via firewall adjustments.
-- Deception-Based Security – Implements honeypots and False Positive Protocol (FPP) to mislead attackers.
-- Kernel-Level Security Enforcement – Monitors system calls (Ring 0) for unauthorized activities.
-- Global Threat Intelligence Integration – Uses external security feeds to stay updated on new threats.
+-----------
+
+AI-Based Intrusion Detection
+  - Utilizes advanced ML models (RandomForest, Gradient Boosting)
+  - Real-time classification of network threats
+  - Anomaly detection for zero-day exploits
+
+Comprehensive Network Monitoring
+  - Deep packet inspection and analysis
+  - Flow-based traffic monitoring
+  - Protocol-aware behavior analysis
+
+False Positive Protocol (FPP)
+  - Intelligent honeypot deployment
+  - Advanced attacker profiling
+  - Threat intelligence collection
+
+Automated Threat Response
+  - Dynamic firewall rule generation
+  - Attacker isolation mechanisms
+  - Incident response automation
+
+Enterprise-Ready Architecture
+  - Scalable from small networks to enterprise deployments
+  - Lightweight resource footprint
+  - Flexible deployment options (on-premise, cloud, hybrid)
 
 Installation
+-----------
 
 Prerequisites
-Ensure you have the following installed before running BlackWall:
-- Python 3.9+
-- pip (Python package manager)
+- Python 3.8 or higher
+- Network access with appropriate permissions
+- 2GB RAM minimum (4GB recommended)
 
-Installing Dependencies
-Install the required dependencies:
+Quick Install
+
+Clone the repository:
+git clone https://github.com/basilabdullah/blackwall.git
+cd blackwall
+
+Install dependencies:
 pip install -r requirements.txt
 
-Dataset Installation
-To train the AI model effectively, download the CIC-IDS-2017 dataset:
-Download Dataset: http://cicresearch.ca/CICDataset/CIC-IDS-2017/Dataset/CIC-IDS-2017/CSVs/MachineLearningCSV.zip
+Run initial setup:
+python setup.py
 
-1. Download the following CSV files:
-   - Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv
-   - Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv
-2. Extract these files into the following path:
-blackwall_project/datasets/MachineLearningCSV/
-
-Folder Structure
-blackwall_project/
-│── datasets/                  # Contains network traffic datasets
-│── models/                    # Trained ML models
-│── blackwall.py               # Main execution script
-│── requirements.txt           # Required Python libraries
-│── README.md                  # Project documentation
-│── LICENSE                    # Licensing details
 
 Usage
+-----
 
-Training the AI Model
-To train the AI model using real-world cybersecurity datasets:
-python blackwall.py --train
+Command Line Interface
+BlackWall provides a comprehensive command-line interface:
 
-This will:
-- Load the network traffic datasets
-- Train the RandomForest-based intrusion detection model
-- Generate a blackwall_model.pkl and blackwall_scaler.pkl in the models/ folder
-
-Running the Cyber Defense System
-Once trained, BlackWall can autonomously monitor and defend against cyber threats.
-
-To start monitoring your network:
+Start real-time monitoring:
 python blackwall.py --monitor
 
-- The system will log all processed packets and detected intrusions inside blackwall.log.
-- The monitor runs for 30 seconds by default.
+Specify network interfaces:
+python blackwall.py --monitor --interface eth0,eth1
 
-How BlackWall Works
-1. Loads Network Traffic Data – Supports PCAP and CSV format.
-2. Feature Extraction – Analyzes packet behavior, flags, and timing for key insights.
-3. Data Preprocessing – Cleans missing values, normalizes data, and removes outliers.
-4. Machine Learning Model – Uses a RandomForest classifier to predict attack traffic.
-5. Deception Techniques – Sends attackers into honeypots instead of allowing access.
-6. Automated Containment – Blocks malicious traffic with dynamic firewall adjustments.
+Enable verbose logging:
+python blackwall.py --monitor --verbose
 
-Logs & Results
+Run in debug mode:
+python blackwall.py --monitor --debug
 
-Training Logs
-- Training logs are saved in blackwall.log.
-- Key outputs include:
-  - Dataset loading
-  - Feature extraction
-  - Model performance details
+View system statistics:
+python blackwall.py --stats
 
-Monitoring Logs
-- While monitoring, all packets are logged in blackwall.log.
-- Detected intrusions are logged as:
-Potential Intrusion Detected! Packet Summary: <details>
+Train AI models on custom datasets:
+python blackwall.py --train
 
-To filter detected threats only:
-cat blackwall.log | grep "Potential Intrusion Detected"
+Force retraining of AI models:
+python blackwall.py --train --force
 
-Troubleshooting
+View security logs:
+python blackwall.py --logs
 
-No Detected Intrusions in Logs?
-- Ensure you have trained the model correctly with:
-  python blackwall.py --train
-- Simulate attack traffic with tools like nmap, hping3, or Metasploit to test detection.
-- If needed, try adjusting the model's parameters for improved sensitivity.
+Show version information:
+python blackwall.py --version
 
-Dataset Not Found Error?
-- Confirm that your dataset files are correctly placed inside:
-blackwall_project/datasets/MachineLearningCSV/
 
-Future Enhancements
-- Reinforcement Learning Integration – Adaptive AI that evolves with attack patterns.
-- Cloud Security Deployment – Expanded support for AWS, Azure, and GCP.
-- Blockchain Security Logs – Immutable logs to prevent tampering.
-- Real-time EDR/NDR Integration – Support for enterprise-grade security solutions.
+Integration API
+BlackWall can be integrated into existing security infrastructure:
 
-Contributions
-Contributions are welcome. To contribute:
-1. Fork the repository.
-2. Submit a pull request with new features, bug fixes, or improvements.
-3. Report issues and suggest enhancements.
+from blackwall import BlackWall
 
-Contact
-For inquiries, collaborations, or commercial licensing, contact:
+Initialize with custom configuration:
+bw = BlackWall(config_path="custom_config.yml")
 
-Email: 444019967@stu.bu.edu.sa
-Discord: awaitingg
+Start monitoring specific interfaces:
+bw.start_monitoring(interfaces=["eth0", "wlan0"])
 
-"BlackWall is the future of AI-driven cybersecurity. The goal is clear: deceive, neutralize, and outsmart attackers before they strike."
+Register callback for threat alerts:
+bw.on_threat_detected(callback_function)
 
-Glory to God.
+Access monitoring statistics:
+stats = bw.get_stats()
+
+
+AI and Machine Learning
+----------------------
+
+BlackWall employs multiple machine learning approaches:
+
+Supervised Learning
+  - Classification of known attack patterns
+  - Feature extraction from network flows
+
+Unsupervised Learning
+  - Behavioral baseline establishment
+  - Anomaly detection for unknown threats
+
+Adaptive Model Training
+  - Continuous learning from new data
+  - Model validation against false positives
+
+Architecture
+-----------
+
+BlackWall is built on a modular architecture:
+
+Core Engine - Central processing and coordination
+Network Monitor - Packet capture and analysis
+Model Manager - AI model training and execution
+Log Manager - Secure logging and audit trails
+FPP System - Honeypot and deception technology
+
+Estimated Performance
+--------------------
+
+Deployment Size | Packets/sec | Memory Usage | CPU Load
+Small Office    | 10,000      | 200MB        | 5-10%    
+Medium Business | 50,000      | 500MB        | 15-20%   
+Enterprise      | 200,000+    | 1.2GB        | 25-40%   
+
+Future Roadmap
+-------------
+
+Q2 2025
+  - Integration with SIEM platforms
+  - Enhanced cloud workload protection
+
+Q3 2025
+  - Reinforcement learning models
+  - Automated threat hunting capabilities
+
+Q4 2025
+  - Comprehensive IoT device protection
+  - Advanced forensic analysis tools
+
+Contributing
+-----------
+
+We welcome contributions to BlackWall:
+
+1. Fork the repository
+2. Create a feature branch (git checkout -b feature/amazing-feature)
+3. Commit your changes (git commit -m 'Add amazing feature')
+4. Push to the branch (git push origin feature/amazing-feature)
+5. Open a Pull Request
+
+For major changes, please open an issue first to discuss what you would like to change.
+
+License
+-------
+
+BlackWall is released under the MIT License. See the LICENSE file for details.
+
+About the Author
+---------------
+
+BlackWall is developed by Basil Abdullah at Al-Baha University.
+
+
+"The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."
+
+
 
