@@ -59,25 +59,154 @@ Prerequisites
 - Python 3.8 or higher
 - Network access with appropriate permissions
 - 2GB RAM minimum (4GB recommended)
+- Git (for cloning the repository)
 
-Quick Install
-```bash
-# Clone the repository
-git clone https://github.com/basilabdullah/blackwall.git
-cd blackwall
+Detailed Installation Instructions
+--------------------------------
 
-# Install dependencies
-pip install -r requirements.txt
+Windows Installation
+------------------
 
-# Create required directories
-mkdir -p datasets models
+1. Install Python if you haven't already:
+   - Download Python from https://www.python.org/downloads/
+   - During installation, check "Add Python to PATH"
+   - Complete the installation wizard
 
-# Place your dataset files in the 'datasets' directory
-# (Sampled_Dataset_Example.csv and Final_Preprocessed_Dataset_Sample.csv)
+2. Install Git if you haven't already:
+   - Download from https://git-scm.com/download/win
+   - Use the default installation options
 
-# Train initial model
-python blackwall.py --train
-```
+3. Open PowerShell as Administrator:
+   - Press Windows key
+   - Type "PowerShell"
+   - Right-click on "Windows PowerShell" and select "Run as administrator"
+
+4. Clone the repository:
+   ```
+   cd C:\Users\YourUsername\Documents
+   git clone https://github.com/basilabdullah/blackwall.git
+   cd blackwall
+   ```
+
+5. Create a virtual environment (recommended):
+   ```
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
+
+6. Install required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+7. Create necessary directories:
+   ```
+   mkdir datasets
+   mkdir models
+   ```
+
+8. Download or create dataset files:
+   - Place your dataset files in the `datasets` folder
+   - Required files: 
+     - `Sampled_Dataset_Example.csv`
+     - `Final_Preprocessed_Dataset_Sample.csv`
+
+9. Train the initial model:
+   ```
+   python blackwall.py --train
+   ```
+
+10. Verify installation:
+    ```
+    python blackwall.py --version
+    ```
+
+Linux/Mac Installation
+--------------------
+
+1. Install Python if not already installed:
+   
+   For Ubuntu/Debian:
+   ```
+   sudo apt update
+   sudo apt install python3 python3-pip python3-venv
+   ```
+   
+   For Mac (using Homebrew):
+   ```
+   brew install python
+   ```
+
+2. Install Git if not already installed:
+   
+   For Ubuntu/Debian:
+   ```
+   sudo apt install git
+   ```
+   
+   For Mac:
+   ```
+   brew install git
+   ```
+
+3. Clone the repository:
+   ```
+   cd ~/Documents
+   git clone https://github.com/basilabdullah/blackwall.git
+   cd blackwall
+   ```
+
+4. Create a virtual environment (recommended):
+   ```
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+5. Install required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+6. Create necessary directories:
+   ```
+   mkdir -p datasets models
+   ```
+
+7. Download or create dataset files:
+   - Place your dataset files in the `datasets` folder
+   - Required files: 
+     - `Sampled_Dataset_Example.csv`
+     - `Final_Preprocessed_Dataset_Sample.csv`
+
+8. Train the initial model:
+   ```
+   python blackwall.py --train
+   ```
+
+9. Verify installation:
+   ```
+   python blackwall.py --version
+   ```
+
+Troubleshooting Installation Issues
+---------------------------------
+
+1. Python path not found:
+   - Ensure Python is added to your system PATH
+   - Restart your terminal/PowerShell after installation
+
+2. Missing dependencies:
+   - Make sure pip is up to date: `pip install --upgrade pip`
+   - Try installing dependencies one by one if batch install fails
+
+3. Permission errors:
+   - On Windows: Make sure you're running as Administrator
+   - On Linux/Mac: Use `sudo` for operations requiring elevated privileges
+
+4. Dataset loading errors:
+   - Verify dataset files are in the correct location
+   - Check file permissions
+   - Run with debug flag: `python blackwall.py --train --debug`
 
 Usage
 -----
@@ -195,29 +324,6 @@ Q4 2025
   - Comprehensive IoT device protection
   - Advanced forensic analysis tools
 
-Troubleshooting
--------------
-
-Common Issues
-
-Dataset Not Found
-If you encounter errors related to missing datasets:
-```
-Failed to load dataset from any available path
-```
-
-Make sure your dataset files are in the correct location:
-```
-blackwall/datasets/Sampled_Dataset_Example.csv
-blackwall/datasets/Final_Preprocessed_Dataset_Sample.csv
-```
-
-Model Training Fails
-If model training fails, try running with debug output:
-```
-python blackwall.py --train --debug
-```
-
 Contributing
 -----------
 
@@ -244,6 +350,3 @@ BlackWall is developed by Basil Abdullah at Al-Baha University.
 ---
 
 "The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."
-For major changes, please open an issue first to discuss what you would like to change.
-
-
