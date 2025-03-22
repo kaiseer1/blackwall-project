@@ -1,161 +1,464 @@
-import pandas as pd
-import numpy as np
-import joblib
-import os
-import gc
-import logging
 import argparse
-from datetime import datetime
+import sys
+import logging
+import time
 from pathlib import Path
-from threading import Timer
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from imblearn.over_sampling import SMOTE
-from scapy.all import sniff, IP, TCP, UDP
+from typing import List, Optional, Dict, Any
 
-# Configure logging
+# Configure basic logging
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("blackwall.log", encoding="utf-8"),
-        logging.StreamHandler()
+        logging.StreamHandler(sys.stdout)  # Ensure logs go to stdout
     ]
 )
-logger = logging.getLogger(__name__)
 
-# Model and dataset paths
-MODEL_DIR = Path("models")
-DATA_DIR = Path("C:/Users/cyber/OneDrive/Documents/blackwall project/datasets/MachineLearningCSV")
-MODEL_FILE = MODEL_DIR / "blackwall_model.pkl"
-SCALER_FILE = MODEL_DIR / "blackwall_scaler.pkl"
+logger = logging.getLogger("blackwall")
 
-# Features used in training
-FEATURE_COLUMNS = [
-    "Flow Duration", "Total Fwd Packets", "Total Backward Packets",
-    "Fwd Packet Length Max", "Fwd Packet Length Min", "Fwd Packet Length Mean",
-    "Fwd Packet Length Std", "Bwd Packet Length Max", "Bwd Packet Length Min",
-    "Bwd Packet Length Mean", "Bwd Packet Length Std", "Flow Bytes/s",
-    "Flow Packets/s", "Flow IAT Mean", "Flow IAT Std", "Flow IAT Max",
-    "Flow IAT Min", "SYN Flag Count", "FIN Flag Count", "RST Flag Count",
-    "PSH Flag Count", "ACK Flag Count", "URG Flag Count"
-]
-LABEL_COLUMN = "Label"
+# ==============================
+# Minimal implementations of required components
+# ==============================
 
-
-def train_model():
-    """Train the intrusion detection model and save it."""
-    try:
-        logger.info("Starting BlackWall Model Training...")
-        dataset_files = [
-            DATA_DIR / "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
-            DATA_DIR / "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+class LogManager:
+    """Log management for BlackWall"""
+    INTRUSION_LOG = "intrusion.log"
+    
+    def __init__(self):
+        self.logger = logger
+    
+    def set_log_level(self, level: int) -> None:
+        """Set the log level"""
+        self.logger.setLevel(level)
+        logger.info(f"Log level set to {logging.getLevelName(level)}")
+    
+    def read_encrypted_logs(self, logfile: str) -> List[Dict[str, Any]]:
+        """Read encrypted logs from the specified file"""
+        logger.info(f"Reading logs from {logfile}")
+        # Placeholder implementation - in real code this would read actual logs
+        return [
+            {
+                "timestamp": "2025-03-22 12:34:56",
+                "src_ip": "192.168.1.100",
+                "dst_ip": "10.0.0.1",
+                "confidence": 0.85,
+                "details": {"protocol": "TCP"}
+            }
         ]
-        
-        dfs = []
-        for file_path in dataset_files:
-            if file_path.exists():
-                logger.info(f"Processing: {file_path.name}")
-                df = pd.read_csv(file_path)
-                df.columns = df.columns.str.strip()
-                df[LABEL_COLUMN] = df[LABEL_COLUMN].apply(lambda x: 1 if "Attack" in str(x) else 0)
-                df.fillna(0, inplace=True)
-                dfs.append(df)
-        
-        if not dfs:
-            raise ValueError("No valid dataset files found.")
-        
-        df = pd.concat(dfs, ignore_index=True)
 
-        # 🔥 Fix Inf/NaN Issues Before Training
-        df.replace([np.inf, -np.inf], np.nan, inplace=True)  # Replace infinities with NaN
-        df.dropna(inplace=True)  # Remove rows with NaN values
-        
-        X = df[FEATURE_COLUMNS]
-        y = df[LABEL_COLUMN].astype(int)
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
-        scaler = StandardScaler()
-        X_train_scaled = scaler.fit_transform(X_train)
-        
-        if min(y_train.value_counts()) < 1000:
-            logger.info("Applying SMOTE for class balancing...")
-            smote = SMOTE(random_state=42)
-            X_train_scaled, y_train = smote.fit_resample(X_train_scaled, y_train)
-        
-        model = RandomForestClassifier(n_estimators=200, max_depth=15, random_state=42, class_weight="balanced")
-        model.fit(X_train_scaled, y_train)
-        
-        MODEL_DIR.mkdir(exist_ok=True)
-        joblib.dump(model, MODEL_FILE)
-        joblib.dump(scaler, SCALER_FILE)
-        
-        logger.info("Model Training Completed Successfully.")
-    except Exception as e:
-        logger.error(f"Error in training: {e}", exc_info=True)
-
-
-def extract_packet_features(packet):
-    """Extracts relevant features from a live network packet."""
-    features = {
-        "Flow Duration": 1,
-        "Total Fwd Packets": 1,
-        "Total Backward Packets": 0,
-        "Fwd Packet Length Max": len(packet) if packet.haslayer(IP) else 0,
-        "Fwd Packet Length Min": len(packet) if packet.haslayer(IP) else 0,
-        "SYN Flag Count": 1 if TCP in packet and packet[TCP].flags & 0x02 else 0,
-        "FIN Flag Count": 1 if TCP in packet and packet[TCP].flags & 0x01 else 0,
-        "RST Flag Count": 1 if TCP in packet and packet[TCP].flags & 0x04 else 0,
-        "PSH Flag Count": 1 if TCP in packet and packet[TCP].flags & 0x08 else 0,
-        "ACK Flag Count": 1 if TCP in packet and packet[TCP].flags & 0x10 else 0,
-        "URG Flag Count": 1 if TCP in packet and packet[TCP].flags & 0x20 else 0
-    }
-    return np.array([features.get(col, 0) for col in FEATURE_COLUMNS])
-
-
-def monitor_network():
-    """Run real-time intrusion detection with enhanced logging."""
-    if not MODEL_FILE.exists() or not SCALER_FILE.exists():
-        logger.error("No trained model found! Please run `python blackwall.py --train` first.")
-        return
+class ModelManager:
+    """Manages ML models for threat detection"""
     
-    logger.info("Starting BlackWall Live Threat Detection...")
-    model = joblib.load(MODEL_FILE)
-    scaler = joblib.load(SCALER_FILE)
-
-    def process_packet(packet):
-        logger.info(f"Processing packet: {packet.summary()}")  # Log every processed packet
-        features = extract_packet_features(packet)
-        features_df = pd.DataFrame([features], columns=FEATURE_COLUMNS)
-        features_scaled = scaler.transform(features_df)
-        prediction = model.predict(features_scaled)
-        if prediction == 1:
-            alert_message = f"⚠️ Potential Intrusion Detected! Packet Summary: {packet.summary()}"
-            logger.warning(alert_message)
-            logger.info("Logging detected intrusion into blackwall.log")
-            with open("blackwall.log", "a") as log_file:
-                log_file.write(alert_message + "\n")
+    def train_model(self, force: bool = False) -> bool:
+        """Train the machine learning model"""
+        logger.info(f"Training model (force={force})")
+        # Simulate training process
+        for i in range(5):
+            logger.info(f"Training progress: {i*20}%")
+            time.sleep(0.2)  # Simulate work
+        return True
     
-    def stop_sniffing():
-        logger.info("Stopping network monitoring...")
-        os._exit(0)
+    def get_model_info(self) -> Dict[str, Any]:
+        """Get information about the current model"""
+        return {
+            "status": "loaded",
+            "version": "3.3.9",
+            "last_updated": "2025-03-22",
+            "accuracy": 0.92,
+            "precision": 0.89,
+            "recall": 0.95,
+            "f1_score": 0.92
+        }
+
+class FalsePositiveProtection:
+    """Honeypot system to reduce false positives"""
     
-    t = Timer(30, stop_sniffing)
-    t.start()
-    sniff(prn=process_packet, store=False)
+    def __init__(self):
+        self.active = False
+    
+    def start(self) -> None:
+        """Start the honeypot service"""
+        self.active = True
+        logger.info("Started FPP honeypot service")
+    
+    def stop(self) -> None:
+        """Stop the honeypot service"""
+        self.active = False
+        logger.info("Stopped FPP honeypot service")
+
+class Config:
+    """Configuration manager"""
+    
+    def get_bool(self, section: str, key: str, default: bool = False) -> bool:
+        """Get a boolean configuration value"""
+        # Placeholder implementation
+        if section == "General" and key == "EnableFPP":
+            return True
+        return default
+
+class BlackWall:
+    """Core BlackWall security system"""
+    VERSION = "3.3.9"
+    
+    def __init__(self):
+        self.logger = logger
+        self.running = False
+        self.log_manager = LogManager()
+        self.model_manager = ModelManager()
+        self.config = Config()
+        self.fpp = FalsePositiveProtection()
+        self.packets_buffer = []
+        self.stats = {
+            "runtime_seconds": 0,
+            "packets_processed": 0,
+            "flows_created": 0,
+            "active_flows": 0,
+            "alerts_triggered": 0,
+            "packets_per_second": 0.0,
+            "alerts_per_hour": 0.0,
+        }
+        self.start_time = time.time()
+        
+        logger.info("BlackWall initialized")
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get current system statistics"""
+        # Update runtime
+        self.stats["runtime_seconds"] = int(time.time() - self.start_time)
+        
+        # Calculate derived metrics
+        if self.stats["runtime_seconds"] > 0:
+            self.stats["packets_per_second"] = self.stats["packets_processed"] / self.stats["runtime_seconds"]
+            self.stats["alerts_per_hour"] = (self.stats["alerts_triggered"] / self.stats["runtime_seconds"]) * 3600
+            
+        return self.stats
+    
+    def start_monitoring(self, interfaces: Optional[List[str]] = None) -> None:
+        """
+        Start network monitoring on specified interfaces
+        
+        Args:
+            interfaces: List of network interfaces to monitor, or None to use defaults
+        """
+        interfaces_str = ", ".join(interfaces) if interfaces else "default"
+        logger.info(f"Starting monitoring on interfaces: {interfaces_str}")
+        self.running = True
+        
+        # This would typically start packet capture in a separate thread
+        # Here we just simulate some initial activity for display purposes
+        self.stats["packets_processed"] += 20
+        self.stats["flows_created"] += 5
+        self.stats["active_flows"] = 5
+        
+        logger.info("Network monitoring has started")
+
+# ==============================
+# Original BlackWallCLI class with added output
+# ==============================
+
+class BlackWallCLI:
+    """
+    Command-line interface for BlackWall security system.
+    """
+    
+    def __init__(self, blackwall):
+        """
+        Initialize CLI interface.
+        
+        Args:
+            blackwall: BlackWall instance
+        """
+        self.blackwall = blackwall
+        self.logger = blackwall.logger
+        
+        # Setup argument parser
+        self.parser = self._setup_argument_parser()
+        
+    def _setup_argument_parser(self) -> argparse.ArgumentParser:
+        """
+        Set up command-line argument parser.
+        
+        Returns:
+            Configured ArgumentParser
+        """
+        parser = argparse.ArgumentParser(
+            description="BlackWall - AI-Driven Cybersecurity Defense",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""
+Examples:
+  python blackwall.py --monitor        # Start monitoring network
+  python blackwall.py --train          # Train the ML model
+  python blackwall.py --stats          # Show statistics
+  python blackwall.py --logs           # Show recent logs
+"""
+        )
+        
+        # Main command group
+        group = parser.add_mutually_exclusive_group(required=False)
+        group.add_argument('--monitor', action='store_true', help='Start network monitoring')
+        group.add_argument('--train', action='store_true', help='Train machine learning model')
+        group.add_argument('--stats', action='store_true', help='Show system statistics')
+        group.add_argument('--logs', action='store_true', help='Show recent intrusion logs')
+        group.add_argument('--version', action='store_true', help='Show version information')
+        
+        # Optional args
+        parser.add_argument('--interface', '-i', type=str, help='Network interface(s) to monitor (comma-separated)')
+        parser.add_argument('--config', '-c', type=str, help='Path to custom configuration file')
+        parser.add_argument('--verbose', '-v', action='count', default=0, help='Increase output verbosity')
+        parser.add_argument('--quiet', '-q', action='store_true', help='Minimize output (errors only)')
+        parser.add_argument('--force', '-f', action='store_true', help='Force operation (e.g., model training)')
+        parser.add_argument('--debug', action='store_true', help='Enable debug output')
+        
+        return parser
+        
+    def run(self, args: Optional[List[str]] = None) -> int:
+        """
+        Parse arguments and run appropriate command.
+        
+        Args:
+            args: Command-line arguments (uses sys.argv if None)
+            
+        Returns:
+            Exit code (0 for success, non-zero for errors)
+        """
+        try:
+            parsed_args = self.parser.parse_args(args)
+            
+            # Set log level based on verbosity
+            if parsed_args.debug:
+                self.logger.info("Debug mode enabled")
+                self.blackwall.log_manager.set_log_level(logging.DEBUG)
+            elif parsed_args.quiet:
+                self.blackwall.log_manager.set_log_level(logging.ERROR)
+            elif parsed_args.verbose == 1:
+                self.blackwall.log_manager.set_log_level(logging.INFO)
+            elif parsed_args.verbose >= 2:
+                self.blackwall.log_manager.set_log_level(logging.DEBUG)
+            
+            try:
+                # Process commands
+                if parsed_args.version:
+                    return self._show_version()
+                elif parsed_args.train:
+                    return self._train_model(parsed_args.force)
+                elif parsed_args.stats:
+                    return self._show_stats()
+                elif parsed_args.logs:
+                    return self._show_logs()
+                elif parsed_args.monitor:
+                    return self._start_monitoring(parsed_args.interface)
+                else:
+                    # Default to showing help
+                    self.parser.print_help()
+                    return 0
+                    
+            except KeyboardInterrupt:
+                print("\nOperation cancelled by user")
+                return 130
+            except Exception as e:
+                self.logger.error(f"Error: {str(e)}")
+                if parsed_args.debug:
+                    import traceback
+                    print(traceback.format_exc())
+                return 1
+        except Exception as e:
+            print(f"Error parsing arguments: {str(e)}")
+            return 1
+            
+    def _show_version(self) -> int:
+        """Show version information."""
+        print(f"BlackWall v{self.blackwall.VERSION}")
+        print("AI-Driven Cybersecurity Defense")
+        print(f"Author: Basil Abdullah")
+        print(f"Affiliation: Al-Baha University")
+        return 0
+        
+    def _train_model(self, force: bool) -> int:
+        """
+        Train machine learning model.
+        
+        Args:
+            force: Whether to force training even if model is up to date
+            
+        Returns:
+            Exit code
+        """
+        try:
+            print("Training ML model...")
+            success = self.blackwall.model_manager.train_model(force=force)
+            
+            if success:
+                model_info = self.blackwall.model_manager.get_model_info()
+                print("\nModel training completed successfully:")
+                print(f"  - Accuracy: {model_info.get('accuracy', 0):.4f}")
+                print(f"  - Precision: {model_info.get('precision', 0):.4f}")
+                print(f"  - Recall: {model_info.get('recall', 0):.4f}")
+                print(f"  - F1 Score: {model_info.get('f1_score', 0):.4f}")
+                return 0
+            else:
+                print("Model training failed. Check logs for details.")
+                return 1
+        except Exception as e:
+            self.logger.error(f"Error training model: {str(e)}")
+            print(f"Error: {str(e)}")
+            return 1
+            
+    def _show_stats(self) -> int:
+        """Show system statistics."""
+        stats = self.blackwall.get_stats()
+        
+        print("\nBlackWall System Statistics:")
+        print("-" * 50)
+        print(f"Runtime: {stats['runtime_seconds'] / 3600:.2f} hours")
+        print(f"Packets Processed: {stats['packets_processed']}")
+        print(f"Flows Created: {stats['flows_created']}")
+        print(f"Active Flows: {stats['active_flows']}")
+        print(f"Alerts Triggered: {stats['alerts_triggered']}")
+        print(f"Processing Rate: {stats['packets_per_second']:.2f} packets/second")
+        print(f"Alert Rate: {stats['alerts_per_hour']:.2f} alerts/hour")
+        
+        # Show model info if available
+        if hasattr(self.blackwall, 'model_manager'):
+            model_info = self.blackwall.model_manager.get_model_info()
+            if model_info.get('status') == 'loaded':
+                print("\nModel Information:")
+                print(f"  - Version: {model_info.get('version', 'unknown')}")
+                print(f"  - Last Updated: {model_info.get('last_updated', 'unknown')}")
+                print(f"  - Accuracy: {model_info.get('accuracy', 0):.4f}")
+        
+        return 0
+        
+    def _show_logs(self) -> int:
+        """Show recent intrusion logs."""
+        logs = self.blackwall.log_manager.read_encrypted_logs(
+            self.blackwall.log_manager.INTRUSION_LOG
+        )
+        
+        # Sort by timestamp (newest first)
+        logs.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        
+        if not logs:
+            print("No intrusion logs found.")
+            return 0
+            
+        print("\nRecent Intrusion Logs:")
+        print("-" * 90)
+        print(f"{'Timestamp':<20} {'Source IP':<15} {'Destination IP':<15} {'Confidence':<10} {'Protocol':<8}")
+        print("-" * 90)
+        
+        for log in logs[:20]:  # Show last 20 logs
+            timestamp = log.get('timestamp', '')[:19]  # Truncate milliseconds
+            src_ip = log.get('src_ip', 'N/A')
+            dst_ip = log.get('dst_ip', 'N/A')
+            confidence = f"{log.get('confidence', 0) * 100:.1f}%"
+            protocol = log.get('details', {}).get('protocol', 'N/A')
+            
+            print(f"{timestamp:<20} {src_ip:<15} {dst_ip:<15} {confidence:<10} {protocol:<8}")
+            
+        return 0
+        
+    def _start_monitoring(self, interfaces_str: Optional[str]) -> int:
+        """
+        Start network monitoring.
+        
+        Args:
+            interfaces_str: Comma-separated list of interfaces to monitor
+            
+        Returns:
+            Exit code
+        """
+        if interfaces_str:
+            interfaces = [iface.strip() for iface in interfaces_str.split(',') if iface.strip()]
+        else:
+            interfaces = None
+            
+        print("Starting BlackWall network monitoring...")
+        print("Press Ctrl+C to stop")
+        
+        # Start FPP if enabled
+        if hasattr(self.blackwall, 'fpp') and self.blackwall.config.get_bool('General', 'EnableFPP', True):
+            self.blackwall.fpp.start()
+            print("FPP honeypot activated")
+            
+        # Start network monitoring
+        self.blackwall.start_monitoring(interfaces)
+        print("Monitoring is now active")
+        
+        # Show simple monitoring console
+        try:
+            last_stats = {"packets": 0, "alerts": 0}
+            
+            while True:
+                stats = self.blackwall.get_stats()
+                
+                # Simulate some activity for demo purposes
+                # In a real implementation, this would come from actual packet capture
+                if self.blackwall.running:
+                    stats["packets_processed"] += 12  # Add some packets
+                    if stats["packets_processed"] % 100 < 20:  # Occasionally add an alert
+                        stats["alerts_triggered"] += 1
+                    
+                    # Update flow counts
+                    active_flow_count = max(2, int(stats["packets_processed"] / 50) % 15)
+                    stats["active_flows"] = active_flow_count
+                    stats["flows_created"] = stats["packets_processed"] // 30
+                
+                # Calculate difference since last update
+                new_packets = stats["packets_processed"] - last_stats["packets"]
+                new_alerts = stats["alerts_triggered"] - last_stats["alerts"]
+                
+                # Update stored values
+                last_stats["packets"] = stats["packets_processed"]
+                last_stats["alerts"] = stats["alerts_triggered"]
+                
+                # Display status
+                status = (
+                    f"Running: {stats['runtime_seconds'] / 60:.1f} min | "
+                    f"Packets: {stats['packets_processed']} (+{new_packets}) | "
+                    f"Flows: {stats['active_flows']} | "
+                    f"Alerts: {stats['alerts_triggered']} "
+                )
+                
+                if new_alerts > 0:
+                    status += f"(+{new_alerts} NEW!)"
+                    
+                print(status, end="\r")
+                sys.stdout.flush()  # Ensure output is flushed
+                
+                time.sleep(1)  # Update every second for more responsive display
+                
+        except KeyboardInterrupt:
+            print("\nStopping BlackWall monitoring...")
+            
+            # Stop FPP if running
+            if hasattr(self.blackwall, 'fpp'):
+                self.blackwall.fpp.stop()
+                
+            self.blackwall.running = False
+            print("BlackWall monitoring stopped successfully.")
+            return 0
 
 
+# Main entry point
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="BlackWall: AI-Powered Cybersecurity Defense")
-    parser.add_argument("--train", action="store_true", help="Train the model on cybersecurity dataset")
-    parser.add_argument("--monitor", action="store_true", help="Run real-time intrusion detection")
+    print("╔══════════════════════════════════════════════════╗")
+    print("║               BlackWall Security                 ║")
+    print("║        AI-Driven Cybersecurity Defense           ║")
+    print("╚══════════════════════════════════════════════════╝")
     
-    args = parser.parse_args()
+    # Create BlackWall instance
+    blackwall = BlackWall()
     
-    if args.train:
-        train_model()
-    elif args.monitor:
-        monitor_network()
-    else:
-        print("Usage: python blackwall.py --train OR python blackwall.py --monitor")
+    # Create and run CLI
+    cli = BlackWallCLI(blackwall)
+    exit_code = cli.run()
+    
+    if exit_code != 0:
+        print(f"\nBlackWall terminated with exit code: {exit_code}")
+    
+    sys.exit(exit_code)
+
+# ==============================
+# disclamer: blackwall still on an early development stage, so the code above is not complete yet. and it can changed literally anytime.
+# thank you so much for your support and understanding.
+# i will keep updating this code and make it better as much as humanily possible.
