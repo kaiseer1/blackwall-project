@@ -290,7 +290,7 @@ BlackWall is built on a modular architecture:
 - Log Manager - Secure logging and audit trails
 - FPP System - Honeypot and deception technology
 
-Performance Benchmarks
+Estimated Benchmarks
 --------------------
 
 | Deployment Size | Packets/sec | Memory Usage | CPU Load |
