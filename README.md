@@ -246,18 +246,4 @@ BlackWall is developed by Basil Abdullah at Al-Baha University.
 "The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."
 For major changes, please open an issue first to discuss what you would like to change.
 
-License
--------
-
-BlackWall is released under the MIT License. See the LICENSE file for details.
-
-About the Author
----------------
-
-BlackWall is developed by Basil Abdullah at Al-Baha University.
-
-
-"The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."
-
-
 
