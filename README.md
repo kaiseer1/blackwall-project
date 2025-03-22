@@ -50,7 +50,7 @@ Prerequisites
 Quick Install
 
 Clone the repository:
-git clone https://github.com/basilabdullah/blackwall.git
+git clone https://github.com/kaiseer1/blackwall-project.git
 cd blackwall
 
 Install dependencies:
