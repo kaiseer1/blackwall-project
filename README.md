@@ -1,3 +1,6 @@
+# BlackWall v3.4.0
+## AI-Driven Cybersecurity Defense System
+
 ## ⚠️ License Information (IMPORTANT)
 
 BlackWall is **dual-licensed** under **Apache 2.0 and AGPLv3**:
@@ -19,44 +22,38 @@ For businesses that need **private modifications**, a commercial license is avai
 
 For full details, read [`LICENSE-Apache-2.0`](LICENSE-Apache-2.0) and [`LICENSE-AGPL-3.0`](LICENSE-AGPL-3.0).
 
----
+## Overview
 
-# BlackWall v3.4.0
-## AI-Driven Cybersecurity Defense System
-Overview
---------
 BlackWall is a next-generation AI-powered cybersecurity system that monitors, detects, and neutralizes cyber threats in real-time. Unlike traditional security solutions, BlackWall leverages machine learning, deception techniques, and automated threat response to create a proactive defense mechanism that adapts to evolving threats.
 
-Key Features
------------
+## Key Features
 
-AI-Based Intrusion Detection
-  - Utilizes advanced ML models (RandomForest, Gradient Boosting)
-  - Real-time classification of network threats
-  - Anomaly detection for zero-day exploits
+### AI-Based Intrusion Detection
+- Utilizes advanced ML models (RandomForest, Gradient Boosting)
+- Real-time classification of network threats
+- Anomaly detection for zero-day exploits
 
-Comprehensive Network Monitoring
-  - Deep packet inspection and analysis
-  - Flow-based traffic monitoring
-  - Protocol-aware behavior analysis
+### Comprehensive Network Monitoring
+- Deep packet inspection and analysis
+- Flow-based traffic monitoring
+- Protocol-aware behavior analysis
 
-False Positive Protocol (FPP)
-  - Intelligent honeypot deployment
-  - Advanced attacker profiling
-  - Threat intelligence collection
+### False Positive Protocol (FPP)
+- Intelligent honeypot deployment
+- Advanced attacker profiling
+- Threat intelligence collection
 
-Automated Threat Response
-  - Dynamic firewall rule generation
-  - Attacker isolation mechanisms
-  - Incident response automation
+### Automated Threat Response
+- Dynamic firewall rule generation
+- Attacker isolation mechanisms
+- Incident response automation
 
-Enterprise-Ready Architecture
-  - Scalable from small networks to enterprise deployments
-  - Lightweight resource footprint
-  - Flexible deployment options (on-premise, cloud, hybrid)
+### Enterprise-Ready Architecture
+- Scalable from small networks to enterprise deployments
+- Lightweight resource footprint
+- Flexible deployment options (on-premise, cloud, hybrid)
 
-Project Structure
----------------
+## Project Structure
 
 After installation, your project structure should look like this:
 
@@ -69,25 +66,23 @@ blackwall/
 │   ├── Sampled_Dataset_Example.csv
 │   └── Final_Preprocessed_Dataset_Sample.csv
 ├── .gitignore
-├── LICENSE
+├── LICENSE-Apache-2.0
+├── LICENSE-AGPL-3.0
 ├── README.md
 └── requirements.txt
 ```
 
-Installation
------------
+## Installation
 
-Prerequisites
+### Prerequisites
 - Python 3.8 or higher
 - Network access with appropriate permissions
 - 2GB RAM minimum (4GB recommended)
 - Git (for cloning the repository)
 
-Detailed Installation Instructions
---------------------------------
+### Detailed Installation Instructions
 
-Windows Installation
-------------------
+#### Windows Installation
 
 1. Install Python if you haven't already:
    - Download Python from https://www.python.org/downloads/
@@ -143,8 +138,7 @@ Windows Installation
     python blackwall.py --version
     ```
 
-Linux/Mac Installation
---------------------
+#### Linux/Mac Installation
 
 1. Install Python if not already installed:
    
@@ -210,8 +204,7 @@ Linux/Mac Installation
    python blackwall.py --version
    ```
 
-Troubleshooting Installation Issues
----------------------------------
+### Troubleshooting Installation Issues
 
 1. Python path not found:
    - Ensure Python is added to your system PATH
@@ -230,10 +223,9 @@ Troubleshooting Installation Issues
    - Check file permissions
    - Run with debug flag: `python blackwall.py --train --debug`
 
-Usage
------
+## Usage
 
-Command Line Interface
+### Command Line Interface
 BlackWall provides a comprehensive command-line interface:
 
 ```bash
@@ -265,7 +257,7 @@ python blackwall.py --logs
 python blackwall.py --version
 ```
 
-Integration API
+### Integration API
 BlackWall can be integrated into existing security infrastructure:
 
 ```python
@@ -284,36 +276,33 @@ bw.on_threat_detected(callback_function)
 stats = bw.get_stats()
 ```
 
-AI and Machine Learning
-----------------------
+## AI and Machine Learning
 
 BlackWall employs multiple machine learning approaches:
 
-Supervised Learning
-  - Classification of known attack patterns
-  - Feature extraction from network flows
+### Supervised Learning
+- Classification of known attack patterns
+- Feature extraction from network flows
 
-Unsupervised Learning
-  - Behavioral baseline establishment
-  - Anomaly detection for unknown threats
+### Unsupervised Learning
+- Behavioral baseline establishment
+- Anomaly detection for unknown threats
 
-Adaptive Model Training
-  - Continuous learning from new data
-  - Model validation against false positives
+### Adaptive Model Training
+- Continuous learning from new data
+- Model validation against false positives
 
-Architecture
------------
+## Architecture
 
 BlackWall is built on a modular architecture:
 
-- Core Engine - Central processing and coordination
-- Network Monitor - Packet capture and analysis
-- Model Manager - AI model training and execution
-- Log Manager - Secure logging and audit trails
-- FPP System - Honeypot and deception technology
+- **Core Engine** - Central processing and coordination
+- **Network Monitor** - Packet capture and analysis
+- **Model Manager** - AI model training and execution
+- **Log Manager** - Secure logging and audit trails
+- **FPP System** - Honeypot and deception technology
 
-Estimated Benchmarks
---------------------
+## Estimated Benchmarks
 
 | Deployment Size | Packets/sec | Memory Usage | CPU Load |
 |-----------------|-------------|--------------|----------|
@@ -321,33 +310,30 @@ Estimated Benchmarks
 | Medium Business | 50,000      | 500MB        | 15-20%   |
 | Enterprise      | 200,000+    | 1.2GB        | 25-40%   |
 
-Dataset Requirements
-------------------
+## Dataset Requirements
 
 BlackWall requires network traffic datasets for training. Two sample datasets are used by default:
 
-1. Sampled_Dataset_Example.csv - Contains labeled network traffic data (5000 rows)
-2. Final_Preprocessed_Dataset_Sample.csv - Contains preprocessed network features
+1. **Sampled_Dataset_Example.csv** - Contains labeled network traffic data (5000 rows)
+2. **Final_Preprocessed_Dataset_Sample.csv** - Contains preprocessed network features
 
 For optimal results, ensure that datasets include a "Label" column for classifying traffic patterns.
 
-Future Roadmap
-------------
+## Future Roadmap
 
-Q2 2025
-  - Integration with SIEM platforms
-  - Enhanced cloud workload protection
+### Q2 2025
+- Integration with SIEM platforms
+- Enhanced cloud workload protection
 
-Q3 2025
-  - Reinforcement learning models
-  - Automated threat hunting capabilities
+### Q3 2025
+- Reinforcement learning models
+- Automated threat hunting capabilities
 
-Q4 2025
-  - Comprehensive IoT device protection
-  - Advanced forensic analysis tools
+### Q4 2025
+- Comprehensive IoT device protection
+- Advanced forensic analysis tools
 
-Contributing
------------
+## Contributing
 
 We welcome contributions to BlackWall:
 
@@ -359,15 +345,18 @@ We welcome contributions to BlackWall:
 
 For major changes, please open an issue first to discuss what you would like to change.
 
-License
-------
+## License
 
-BlackWall is released under the Apache License 2.0 and AGPLv3. See the LICENSE and LICENSE.MD files for details.
+BlackWall is dual-licensed under Apache License 2.0 and GNU Affero General Public License v3.0. 
+See the [`LICENSE-Apache-2.0`](LICENSE-Apache-2.0) and [`LICENSE-AGPL-3.0`](LICENSE-AGPL-3.0) files for details.
 
-About the Author
---------------
+## About the Author
 
 BlackWall is developed by Basil Abdullah at Al-Baha University.
+
+---
+
+*"The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."*
 
 ---
 
