@@ -340,7 +340,7 @@ For major changes, please open an issue first to discuss what you would like to 
 License
 ------
 
-BlackWall is released under the Apache License 2.0. See the LICENSE file for details.
+BlackWall is released under the Apache License 2.0 and AGPLv3. See the LICENSE and LICENSE.MD files for details.
 
 About the Author
 --------------
