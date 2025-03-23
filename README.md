@@ -18,9 +18,11 @@ For businesses that need **private modifications**, a commercial license is avai
 👉 **Contact basilabdullah@outlook.com for licensing options.**  
 
 For full details, read [`LICENSE-Apache-2.0`](LICENSE-Apache-2.0) and [`LICENSE-AGPL-3.0`](LICENSE-AGPL-3.0).
-BlackWall v3.4.0
-AI-Driven Cybersecurity Defense System
 
+---
+
+# BlackWall v3.4.0
+## AI-Driven Cybersecurity Defense System
 Overview
 --------
 BlackWall is a next-generation AI-powered cybersecurity system that monitors, detects, and neutralizes cyber threats in real-time. Unlike traditional security solutions, BlackWall leverages machine learning, deception techniques, and automated threat response to create a proactive defense mechanism that adapts to evolving threats.
