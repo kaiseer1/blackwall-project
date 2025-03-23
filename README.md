@@ -1,3 +1,23 @@
+**License Information (IMPORTANT)**
+
+BlackWall is **dual-licensed** under **Apache 2.0 and AGPLv3**:
+
+**Apache 2.0** (For open-source and non-commercial use)  
+   - Free to use, modify, and distribute.  
+   - No requirement to open-source modifications.  
+   - Ideal for **individual developers, researchers, and educational use.**  
+
+2️⃣ **AGPLv3** (For companies, enterprises, and SaaS/cloud providers)  
+   - If you modify and **distribute** BlackWall (including hosting it as a cloud service),  
+     **you MUST open-source your modifications** under the same license.  
+   - Prevents companies from privatizing improvements without contributing back.  
+   - **If you do not want to release your changes publicly, you must obtain a commercial license.**  
+
+📩 **Commercial License**  
+For businesses that need **private modifications**, a commercial license is available.  
+👉 **Contact basilabdullah@outlook.com for licensing options.**  
+
+For full details, read [`LICENSE-Apache-2.0`](LICENSE-Apache-2.0) and [`LICENSE-AGPL-3.0`](LICENSE-AGPL-3.0).
 BlackWall v3.4.0
 AI-Driven Cybersecurity Defense System
 
