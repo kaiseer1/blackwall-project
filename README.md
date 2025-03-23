@@ -15,7 +15,7 @@ BlackWall is **dual-licensed** under **Apache 2.0 and AGPLv3**:
 
 📩 **Commercial License**  
 For businesses that need **private modifications**, a commercial license is available.  
-👉 **Contact basilabdullah@outlook.com for licensing options.**  
+👉 **Contact basilAbdullah@outlook.com for licensing options.**  
 
 For full details, read [`LICENSE-Apache-2.0`](LICENSE-Apache-2.0) and [`LICENSE-AGPL-3.0`](LICENSE-AGPL-3.0).
 BlackWall v3.4.0
