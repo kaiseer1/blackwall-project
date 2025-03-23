@@ -16,7 +16,7 @@ You may choose which license you want to comply with.
 
 For more details, see LICENSE-Apache-2.0 and LICENSE-AGPL-3.0 in this repository.
 
-For commercial use without AGPL restrictions, contact basilabdullah@outlook.com for licensing options.
+For commercial use without AGPL restrictions, contact 444019967@stu.bu.edu.sa for licensing options.
 
 ==============================
 DISCLAIMER: BlackWall is still in an early development stage, so the code is not complete yet
