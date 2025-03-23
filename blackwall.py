@@ -842,3 +842,27 @@ if __name__ == "__main__":
 # disclamer: blackwall still on an early development stage, so the code above is not complete yet. and it can changed literally anytime.
 # thank you so much for your support and understanding.
 # i will keep updating this code and make it better as much as humanily possible.
+
+
+"""
+=====================================
+BlackWall - AI-Powered Cybersecurity Defense System
+=====================================
+
+Copyright (c) 2025 basil abdullah
+
+This software is dual-licensed under:
+1. **Apache License, Version 2.0 (Apache-2.0)**
+   - Free to use, modify, and distribute.
+   - No requirement to open-source modifications.
+2. **GNU Affero General Public License, Version 3 (AGPL-3.0)**
+   - If modified and distributed (including SaaS/cloud), modifications MUST be open-sourced.
+   - Prevents companies from privatizing improvements without contributing back.
+
+You may choose which license you want to comply with.
+
+For more details, see LICENSE-Apache-2.0 and LICENSE-AGPL-3.0 in this repository.
+
+For commercial use without AGPL restrictions, contact abdullahbasil027@gmail.com for licensing options.
+"""
+
