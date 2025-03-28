@@ -357,7 +357,3 @@ BlackWall is developed by Basil Abdullah at Al-Baha University.
 ---
 
 *"The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."*
-
----
-
-"The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."
