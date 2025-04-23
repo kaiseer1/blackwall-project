@@ -1,359 +1,163 @@
-# BlackWall v3.4.0
-## AI-Driven Cybersecurity Defense System
+BlackWall v3.4.0
 
-## ⚠️ License Information (IMPORTANT)
+AI-Driven Cybersecurity Defense System
 
-BlackWall is **dual-licensed** under **Apache 2.0 and AGPLv3**:
+⚠️ License Information (IMPORTANT)
 
-1️⃣ **Apache 2.0** (For open-source and non-commercial use)  
-   - Free to use, modify, and distribute.  
-   - No requirement to open-source modifications.  
-   - Ideal for **individual developers, researchers, and educational use.**  
+BlackWall is dual-licensed under Apache 2.0 and AGPLv3:
 
-2️⃣ **AGPLv3** (For companies, enterprises, and SaaS/cloud providers)  
-   - If you modify and **distribute** BlackWall (including hosting it as a cloud service),  
-     **you MUST open-source your modifications** under the same license.  
-   - Prevents companies from privatizing improvements without contributing back.  
-   - **If you do not want to release your changes publicly, you must obtain a commercial license.**  
+1️⃣ Apache 2.0 (For open-source and non-commercial use)
 
-📩 **Commercial License**  
-For businesses that need **private modifications**, a commercial license is available.  
-👉 **Contact 444019967@stu.bu.edu.sa for licensing options.**  
+Free to use, modify, and distribute.
 
-For full details, read [`LICENSE-Apache-2.0`](LICENSE-Apache-2.0) and [`LICENSE-AGPL-3.0`](LICENSE-AGPL-3.0).
+No requirement to open-source modifications.
 
-## Overview
+Ideal for individual developers, researchers, and educational use.
 
-BlackWall is a next-generation AI-powered cybersecurity system that monitors, detects, and neutralizes cyber threats in real-time. Unlike traditional security solutions, BlackWall leverages machine learning, deception techniques, and automated threat response to create a proactive defense mechanism that adapts to evolving threats.
+2️⃣ AGPLv3 (For companies, enterprises, and SaaS/cloud providers)
 
-## Key Features
+If you modify and distribute BlackWall (including hosting it as a cloud service),
+you must open-source your modifications under the same license.
 
-### AI-Based Intrusion Detection
-- Utilizes advanced ML models (RandomForest, Gradient Boosting)
-- Real-time classification of network threats
-- Anomaly detection for zero-day exploits
+Prevents companies from privatizing improvements without contributing back.
 
-### Comprehensive Network Monitoring
-- Deep packet inspection and analysis
-- Flow-based traffic monitoring
-- Protocol-aware behavior analysis
+If you wish to retain modifications privately, contact us for a commercial license.
 
-### False Positive Protocol (FPP)
-- Intelligent honeypot deployment
-- Advanced attacker profiling
-- Threat intelligence collection
+📩 Commercial License:
+For enterprise usage and closed-source extensions, contact 444019967@stu.bu.edu.sa.
 
-### Automated Threat Response
-- Dynamic firewall rule generation
-- Attacker isolation mechanisms
-- Incident response automation
+Overview
 
-### Enterprise-Ready Architecture
-- Scalable from small networks to enterprise deployments
-- Lightweight resource footprint
-- Flexible deployment options (on-premise, cloud, hybrid)
+BlackWall is a next-generation, AI-powered cybersecurity system that proactively monitors, detects, and neutralizes cyber threats in real-time. It leverages machine learning, deception-based defenses, and autonomous threat responses to adapt to emerging cyber risks.
 
-## Project Structure
+Key Features
 
-After installation, your project structure should look like this:
+AI-Based Intrusion Detection
 
-```
+RandomForest and Gradient Boosting-based ML models
+
+Anomaly detection, including zero-day exploit identification
+
+Comprehensive Network Monitoring
+
+Deep packet inspection
+
+Flow-based traffic analysis
+
+Protocol behavior profiling
+
+False Positive Protocol (FPP)
+
+Adaptive honeypot deployment
+
+Attacker behavior analysis
+
+Threat intelligence generation
+
+Automated Threat Response
+
+Firewall rule generation
+
+Process containment and isolation
+
+SOC notification integration
+
+Scalable Architecture
+
+Lightweight footprint
+
+Modular component deployment
+
+On-premise, cloud, or hybrid compatibility
+
+Project Structure
+
 blackwall/
-├── blackwall.py                  # Main application file
-├── models/                       # Directory for trained ML models
-│   └── blackwall_model.joblib    # Trained model file
-├── datasets/                     # Dataset directory
-│   ├── Sampled_Dataset_Example.csv
+├── blackwall.py                  # Main application logic
+├── fix_dataset.py                # Dataset preprocessing script (v3.4.0 patch)
+├── datasets/
+│   ├── Sampled_Dataset_Example_cleaned.csv  # Cleaned and updated dataset
 │   └── Final_Preprocessed_Dataset_Sample.csv
-├── .gitignore
+├── models/
+│   └── blackwall_model.joblib    # Trained AI model
 ├── LICENSE-Apache-2.0
 ├── LICENSE-AGPL-3.0
 ├── README.md
-└── requirements.txt
-```
+├── requirements.txt
+└── other_source_files...
 
-## Installation
+Installation
 
-### Prerequisites
-- Python 3.8 or higher
-- Network access with appropriate permissions
-- 2GB RAM minimum (4GB recommended)
-- Git (for cloning the repository)
+See OS-specific instructions above for Windows and Linux/Mac setup, including:
 
-### Detailed Installation Instructions
+Creating virtual environments
 
-#### Windows Installation
+Installing dependencies
 
-1. Install Python if you haven't already:
-   - Download Python from https://www.python.org/downloads/
-   - During installation, check "Add Python to PATH"
-   - Complete the installation wizard
+Preparing datasets
 
-2. Install Git if you haven't already:
-   - Download from https://git-scm.com/download/win
-   - Use the default installation options
+Training the model with --train
 
-3. Open PowerShell as Administrator:
-   - Press Windows key
-   - Type "PowerShell"
-   - Right-click on "Windows PowerShell" and select "Run as administrator"
+Command Line Usage
 
-4. Clone the repository:
-   ```
-   cd C:\Users\YourUsername\Documents
-   git clone https://github.com/basilabdullah/blackwall.git
-   cd blackwall
-   ```
+python blackwall.py --monitor — Start live monitoring
 
-5. Create a virtual environment (recommended):
-   ```
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
+python blackwall.py --train — Train ML model
 
-6. Install required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+python blackwall.py --logs — View logs
 
-7. Create necessary directories:
-   ```
-   mkdir datasets
-   mkdir models
-   ```
+python blackwall.py --version — Check version
 
-8. Download or create dataset files:
-   - Place your dataset files in the `datasets` folder
-   - Required files: 
-     - `Sampled_Dataset_Example.csv`
-     - `Final_Preprocessed_Dataset_Sample.csv`
+Integration API (For Developers)
 
-9. Train the initial model:
-   ```
-   python blackwall.py --train
-   ```
-
-10. Verify installation:
-    ```
-    python blackwall.py --version
-    ```
-
-#### Linux/Mac Installation
-
-1. Install Python if not already installed:
-   
-   For Ubuntu/Debian:
-   ```
-   sudo apt update
-   sudo apt install python3 python3-pip python3-venv
-   ```
-   
-   For Mac (using Homebrew):
-   ```
-   brew install python
-   ```
-
-2. Install Git if not already installed:
-   
-   For Ubuntu/Debian:
-   ```
-   sudo apt install git
-   ```
-   
-   For Mac:
-   ```
-   brew install git
-   ```
-
-3. Clone the repository:
-   ```
-   cd ~/Documents
-   git clone https://github.com/basilabdullah/blackwall.git
-   cd blackwall
-   ```
-
-4. Create a virtual environment (recommended):
-   ```
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-5. Install required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-
-6. Create necessary directories:
-   ```
-   mkdir -p datasets models
-   ```
-
-7. Download or create dataset files:
-   - Place your dataset files in the `datasets` folder
-   - Required files: 
-     - `Sampled_Dataset_Example.csv`
-     - `Final_Preprocessed_Dataset_Sample.csv`
-
-8. Train the initial model:
-   ```
-   python blackwall.py --train
-   ```
-
-9. Verify installation:
-   ```
-   python blackwall.py --version
-   ```
-
-### Troubleshooting Installation Issues
-
-1. Python path not found:
-   - Ensure Python is added to your system PATH
-   - Restart your terminal/PowerShell after installation
-
-2. Missing dependencies:
-   - Make sure pip is up to date: `pip install --upgrade pip`
-   - Try installing dependencies one by one if batch install fails
-
-3. Permission errors:
-   - On Windows: Make sure you're running as Administrator
-   - On Linux/Mac: Use `sudo` for operations requiring elevated privileges
-
-4. Dataset loading errors:
-   - Verify dataset files are in the correct location
-   - Check file permissions
-   - Run with debug flag: `python blackwall.py --train --debug`
-
-## Usage
-
-### Command Line Interface
-BlackWall provides a comprehensive command-line interface:
-
-```bash
-# Start real-time monitoring
-python blackwall.py --monitor
-
-# Specify network interfaces
-python blackwall.py --monitor --interface eth0,eth1
-
-# Enable verbose logging
-python blackwall.py --monitor --verbose
-
-# Run in debug mode
-python blackwall.py --monitor --debug
-
-# View system statistics
-python blackwall.py --stats
-
-# Train AI models on custom datasets
-python blackwall.py --train
-
-# Force retraining of AI models
-python blackwall.py --train --force
-
-# View security logs
-python blackwall.py --logs
-
-# Show version information
-python blackwall.py --version
-```
-
-### Integration API
-BlackWall can be integrated into existing security infrastructure:
-
-```python
 from blackwall import BlackWall
-
-# Initialize with custom configuration
-bw = BlackWall(config_path="custom_config.yml")
-
-# Start monitoring specific interfaces
-bw.start_monitoring(interfaces=["eth0", "wlan0"])
-
-# Register callback for threat alerts
-bw.on_threat_detected(callback_function)
-
-# Access monitoring statistics
+bw = BlackWall()
+bw.start_monitoring(interfaces=["eth0"])
+bw.on_threat_detected(alert_handler)
 stats = bw.get_stats()
-```
 
-## AI and Machine Learning
+Machine Learning
 
-BlackWall employs multiple machine learning approaches:
+Supervised Learning:
 
-### Supervised Learning
-- Classification of known attack patterns
-- Feature extraction from network flows
+Trained on labeled datasets
 
-### Unsupervised Learning
-- Behavioral baseline establishment
-- Anomaly detection for unknown threats
+Detects known threats
 
-### Adaptive Model Training
-- Continuous learning from new data
-- Model validation against false positives
+Unsupervised Learning:
 
-## Architecture
+Identifies anomalies
 
-BlackWall is built on a modular architecture:
+Critical for detecting unknown attack vectors
 
-- **Core Engine** - Central processing and coordination
-- **Network Monitor** - Packet capture and analysis
-- **Model Manager** - AI model training and execution
-- **Log Manager** - Secure logging and audit trails
-- **FPP System** - Honeypot and deception technology
+Patch Notes — v3.4.0
 
-## Estimated Benchmarks
+Added: fix_dataset.py script to clean and preprocess corrupted/missing values
 
-| Deployment Size | Packets/sec | Memory Usage | CPU Load |
-|-----------------|-------------|--------------|----------|
-| Small Office    | 10,000      | 200MB        | 5-10%    |
-| Medium Business | 50,000      | 500MB        | 15-20%   |
-| Enterprise      | 200,000+    | 1.2GB        | 25-40%   |
+Added: Sampled_Dataset_Example_cleaned.csv to replace broken dataset
 
-## Dataset Requirements
+Improved: Dataset preprocessing now handles NaN and infinite values
 
-BlackWall requires network traffic datasets for training. Two sample datasets are used by default:
+Improved: Fallbacks added for missing label columns
 
-1. **Sampled_Dataset_Example.csv** - Contains labeled network traffic data (5000 rows)
-2. **Final_Preprocessed_Dataset_Sample.csv** - Contains preprocessed network features
+Future Roadmap
 
-For optimal results, ensure that datasets include a "Label" column for classifying traffic patterns.
+Q2 2025: SIEM integration, enhanced cloud protection
 
-## Future Roadmap
+Q3 2025: Reinforcement learning integration, threat hunting AI
 
-### Q2 2025
-- Integration with SIEM platforms
-- Enhanced cloud workload protection
+Q4 2025: IoT support, forensic analytics tools
 
-### Q3 2025
-- Reinforcement learning models
-- Automated threat hunting capabilities
-
-### Q4 2025
-- Comprehensive IoT device protection
-- Advanced forensic analysis tools
-
-## Contributing
-
-We welcome contributions to BlackWall:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-BlackWall is dual-licensed under Apache License 2.0 and GNU Affero General Public License v3.0. 
-See the [`LICENSE-Apache-2.0`](LICENSE-Apache-2.0) and [`LICENSE-AGPL-3.0`](LICENSE-AGPL-3.0) files for details.
-
-## About the Author
+About the Author
 
 BlackWall is developed by Basil Abdullah at Al-Baha University.
 
----
+"The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."
 
-*"The best defense is not just a good offense, but an intelligent, adaptive, and deceptive one."*
+Final Notes
+
+This version marks a major milestone in the BlackWall journey. While development will be paused, the foundation has been laid for future evolution through deeper research, advanced AI integration, and enterprise applications.
+
+For serious inquiries or commercial use, contact: 444019967@stu.bu.edu.sa
+
+
