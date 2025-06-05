@@ -87,7 +87,7 @@ class NetworkTrafficDataset:
     
     # Default dataset paths - modified to use relative paths matching README instructions
     DEFAULT_DATASET_PATHS = [
-        "datasets/Sampled_Dataset_Example.csv",     # Prioritizing the dataset with labels and more samples
+        "Sampled_Dataset_Example_cleaned.csv",     # Prioritizing the cleaned dataset included in this repo
         "datasets/Final_Preprocessed_Dataset_Sample.csv"
     ]
     
