@@ -172,3 +172,29 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# BlackWall v4.0 Specific
+logs/
+blackwall.db
+blackwall.db-journal
+*.tmp
+*.temp
+
+# Optional: Uncomment to exclude large files
+# models/*.joblib
+# datasets/*.csv
+
+# Secrets and sensitive data
+secrets.yaml
+config/production.yaml
+*.key
+*.pem
+.env.local
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
