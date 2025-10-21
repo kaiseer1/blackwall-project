@@ -1,0 +1,70 @@
+# BlackWall v4.0 Configuration File
+
+# Network monitoring configuration
+network:
+  interfaces:
+    - any  # Capture on all interfaces
+  promiscuous_mode: true
+  packet_buffer_size: 10000
+  capture_filter: ""  # BPF filter (optional)
+  max_packet_size: 65535
+
+# Machine Learning configuration
+ml:
+  model_type: RandomForest  # RandomForest, GradientBoosting, or Ensemble
+  model_path: models/blackwall_model.joblib
+  dataset_path: datasets/Sampled_Dataset_Example_cleaned.csv
+  confidence_threshold: 0.75  # Minimum confidence for alerts
+  retrain_interval_hours: 24
+  enable_online_learning: false
+
+# Threat detection configuration
+detection:
+  enable_ml_detection: true
+  enable_signature_detection: true
+  enable_anomaly_detection: true
+  enable_behavioral_analysis: true
+  alert_threshold: 0.7
+
+# Honeypot (False Positive Protection) configuration
+honeypot:
+  enabled: true
+  ports:
+    - 22    # SSH
+    - 23    # Telnet
+    - 3389  # RDP
+    - 445   # SMB
+  deception_level: medium  # low, medium, high
+  log_interactions: true
+
+# Automated response configuration
+response:
+  enabled: true
+  auto_block: false  # WARNING: Enable with caution
+  auto_block_threshold: 0.9  # Only block high-confidence threats
+  block_duration_minutes: 60
+  enable_firewall_integration: false  # Requires root/sudo
+  enable_email_alerts: false
+  enable_webhook_alerts: false
+
+# REST API configuration
+api:
+  enabled: false
+  host: 127.0.0.1
+  port: 8080
+  api_key: null  # Set for authentication
+  enable_cors: true
+
+# Database configuration
+database:
+  db_path: blackwall.db
+  retention_days: 30  # Auto-cleanup old records
+  auto_vacuum: true
+
+# Logging configuration
+logging:
+  log_level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  log_dir: logs
+  json_format: false
+  max_file_size_mb: 100
+  backup_count: 5

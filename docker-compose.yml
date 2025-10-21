@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  blackwall:
+    build: .
+    container_name: blackwall
+    network_mode: host  # Required for packet capture
+    cap_add:
+      - NET_ADMIN  # Required for packet capture and firewall
+      - NET_RAW
+    volumes:
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./datasets:/app/datasets
+      - ./models:/app/models
+      - ./blackwall.db:/app/blackwall.db
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    command: python blackwall_new.py --monitor --api
+
+  # Optional: Add a simple web UI container
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: blackwall-ui
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./web:/usr/share/nginx/html:ro
+  #   depends_on:
+  #     - blackwall

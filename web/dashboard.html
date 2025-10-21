@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackWall Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #4fc3f7;
+        }
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat:last-child { border-bottom: none; }
+        .stat-label { font-weight: 600; }
+        .stat-value {
+            font-size: 1.2em;
+            color: #4fc3f7;
+        }
+        .threat-item {
+            background: rgba(244, 67, 54, 0.2);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #f44336;
+        }
+        .threat-high { border-left-color: #f44336; }
+        .threat-medium { border-left-color: #ff9800; }
+        .threat-low { border-left-color: #ffc107; }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active { background: #4caf50; }
+        .status-inactive { background: #f44336; }
+        button {
+            background: #4fc3f7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #039be5;
+        }
+        .error {
+            background: rgba(244, 67, 54, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ BlackWall Security Dashboard</h1>
+        <p>AI-Driven Cybersecurity Defense Platform</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>System Status</h2>
+            <div class="stat">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value">
+                    <span class="status-indicator status-active"></span>
+                    <span id="system-status">Loading...</span>
+                </span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Version:</span>
+                <span class="stat-value" id="version">-</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Uptime:</span>
+                <span class="stat-value" id="uptime">-</span>
+            </div>
+            <button onclick="refreshData()">Refresh</button>
+        </div>
+
+        <div class="card">
+            <h2>Packet Capture</h2>
+            <div class="stat">
+                <span class="stat-label">Total Packets:</span>
+                <span class="stat-value" id="total-packets">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Queue Size:</span>
+                <span class="stat-value" id="queue-size">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value" id="capture-status">-</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Network Flows</h2>
+            <div class="stat">
+                <span class="stat-label">Active Flows:</span>
+                <span class="stat-value" id="active-flows">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Total Flows:</span>
+                <span class="stat-value" id="total-flows">0</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Threat Detection</h2>
+            <div class="stat">
+                <span class="stat-label">Threats Detected:</span>
+                <span class="stat-value" id="threats-detected">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Threats/Minute:</span>
+                <span class="stat-value" id="threats-per-min">0</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Honeypot</h2>
+            <div class="stat">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value" id="honeypot-status">-</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Honeypots:</span>
+                <span class="stat-value" id="honeypot-count">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Interactions:</span>
+                <span class="stat-value" id="honeypot-interactions">0</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>ML Model</h2>
+            <div class="stat">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value" id="model-status">-</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Algorithm:</span>
+                <span class="stat-value" id="model-algorithm">-</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Accuracy:</span>
+                <span class="stat-value" id="model-accuracy">-</span>
+            </div>
+        </div>
+
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2>Recent Threats</h2>
+            <div id="threats-list">Loading threats...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${API_URL}/stats`);
+                const data = await response.json();
+
+                // System
+                document.getElementById('system-status').textContent =
+                    data.system.running ? 'Active' : 'Stopped';
+                document.getElementById('version').textContent = data.system.version;
+                document.getElementById('uptime').textContent = data.system.uptime_formatted;
+
+                // Capture
+                document.getElementById('total-packets').textContent =
+                    data.capture.total_packets || 0;
+                document.getElementById('queue-size').textContent =
+                    `${data.capture.queue_size || 0}/${data.capture.queue_capacity || 0}`;
+                document.getElementById('capture-status').textContent =
+                    data.capture.running ? 'Running' : 'Stopped';
+
+                // Flows
+                document.getElementById('active-flows').textContent =
+                    data.flows.active_flows || 0;
+                document.getElementById('total-flows').textContent =
+                    data.flows.total_flows || 0;
+
+                // Detection
+                document.getElementById('threats-detected').textContent =
+                    data.detection.threats_detected || 0;
+                document.getElementById('threats-per-min').textContent =
+                    (data.detection.threats_per_minute || 0).toFixed(2);
+
+                // Honeypot
+                document.getElementById('honeypot-status').textContent =
+                    data.honeypot.active ? 'Active' : 'Inactive';
+                document.getElementById('honeypot-count').textContent =
+                    data.honeypot.honeypots || 0;
+                document.getElementById('honeypot-interactions').textContent =
+                    data.honeypot.total_interactions || 0;
+
+                // Model
+                document.getElementById('model-status').textContent =
+                    data.model.status || '-';
+                document.getElementById('model-algorithm').textContent =
+                    data.model.algorithm || '-';
+                document.getElementById('model-accuracy').textContent =
+                    data.model.accuracy ? (data.model.accuracy * 100).toFixed(2) + '%' : '-';
+
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+                document.getElementById('system-status').textContent = 'Error';
+            }
+        }
+
+        async function fetchThreats() {
+            try {
+                const response = await fetch(`${API_URL}/threats?limit=5`);
+                const data = await response.json();
+
+                const threatsList = document.getElementById('threats-list');
+
+                if (!data.threats || data.threats.length === 0) {
+                    threatsList.innerHTML = '<p>No threats detected recently.</p>';
+                    return;
+                }
+
+                threatsList.innerHTML = data.threats.map(threat => `
+                    <div class="threat-item threat-${threat.severity}">
+                        <strong>${threat.threat_type}</strong><br>
+                        <small>
+                            ${threat.timestamp}<br>
+                            ${threat.src_ip}:${threat.src_port || 'N/A'} →
+                            ${threat.dst_ip}:${threat.dst_port || 'N/A'}<br>
+                            Confidence: ${(threat.confidence * 100).toFixed(1)}%
+                        </small>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error fetching threats:', error);
+                document.getElementById('threats-list').innerHTML =
+                    '<div class="error">Error loading threats</div>';
+            }
+        }
+
+        function refreshData() {
+            fetchStats();
+            fetchThreats();
+        }
+
+        // Auto-refresh every 5 seconds
+        setInterval(refreshData, 5000);
+
+        // Initial load
+        refreshData();
+    </script>
+</body>
+</html>
